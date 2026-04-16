@@ -11,9 +11,13 @@ export function MapPanel({ title, lat, lng }: MapPanelProps) {
       <div className="map-pin" />
       <div className="map-label">
         <strong>{title}</strong>
-        <span>
+        <span className="map-coords">
           Lat {lat.toFixed(4)} | Lng {lng.toFixed(4)}
         </span>
+        <div className="map-meta">
+          <span className="map-chip">Analitico</span>
+          <span className="map-chip map-chip--gold">Marca Opyta</span>
+        </div>
       </div>
     </section>
   );
