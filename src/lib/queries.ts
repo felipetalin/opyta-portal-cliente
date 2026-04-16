@@ -128,3 +128,52 @@ export async function getGeoFisicoByProjetoId(
 
   return data || [];
 }
+
+
+export type ProjetoWithCliente =
+  Database["public"]["Tables"]["projetos"]["Row"] & {
+    nome_empresa: string | null;
+  };
+
+export async function getProjetosWithCliente(
+  projectIds: number[],
+  accessToken?: string
+): Promise<ProjetoWithCliente[]> {
+  if (!projectIds.length) return [];
+
+  const client = getClient(accessToken);
+
+  const { data: projetosData, error: projError } = await client
+    .from("projetos")
+    .select("*")
+    .in("id_projeto", projectIds);
+
+  if (projError) {
+    console.error("Erro ao buscar projetos:", projError.message);
+    return [];
+  }
+
+  const projetos = (projetosData ?? []) as Database["public"]["Tables"]["projetos"]["Row"][];
+  if (!projetos.length) return [];
+
+  const clienteIds = [...new Set(projetos.map((p) => p.id_cliente))];
+
+  const { data: clientesData, error: cliError } = await client
+    .from("clientes")
+    .select("id_cliente, nome_empresa")
+    .in("id_cliente", clienteIds);
+
+  if (cliError) {
+    console.error("Erro ao buscar clientes:", cliError.message);
+  }
+
+  type ClienteRow = { id_cliente: number; nome_empresa: string };
+  const clienteMap = new Map(
+    ((clientesData ?? []) as ClienteRow[]).map((c) => [c.id_cliente, c.nome_empresa] as const)
+  );
+
+  return projetos.map((p) => ({
+    ...p,
+    nome_empresa: clienteMap.get(p.id_cliente) ?? null,
+  }));
+}

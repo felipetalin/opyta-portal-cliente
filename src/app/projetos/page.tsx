@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { getServerSession } from "@/lib/auth";
-import { getProjetosByIds } from "@/lib/queries";
+import { getProjetosWithCliente } from "@/lib/queries";
 
 export default async function ProjetosPage() {
   const session = await getServerSession();
@@ -14,7 +14,7 @@ export default async function ProjetosPage() {
     .map((id) => Number.parseInt(id, 10))
     .filter((id) => Number.isFinite(id));
 
-  const projects = await getProjetosByIds(allowedIds, session?.accessToken);
+  const projects = await getProjetosWithCliente(allowedIds, session?.accessToken);
 
   return (
     <AppShell title="Projetos" subtitle="Visualizacao dos projetos autorizados para seu acesso.">
@@ -29,15 +29,23 @@ export default async function ProjetosPage() {
           </article>
         ) : null}
         {projects.map((project) => (
-          <article key={project.id_projeto} className="panel">
-            <h2>{project.nome_projeto}</h2>
-            <span className="status-badge">Status: {project.status_projeto ?? "n/d"}</span>
-            <p>
-              ID projeto: {project.id_projeto} | Cliente ID: {project.id_cliente}
-            </p>
-            <p>Local: {project.local_projeto ?? "n/d"}</p>
+          <article key={project.id_projeto} className="panel project-summary-card">
+            <div className="project-card-header">
+              <h2>{project.nome_projeto}</h2>
+              {project.nome_empresa && (
+                <span className="project-client-badge">{project.nome_empresa}</span>
+              )}
+            </div>
+            <div className="project-card-meta">
+              <span className={`status-badge status-${(project.status_projeto ?? "nd").toLowerCase().replace(/\s/g, "-")}`}>
+                {project.status_projeto ?? "Status n/d"}
+              </span>
+              {project.local_projeto && (
+                <span className="project-meta-item">📍 {project.local_projeto}</span>
+              )}
+            </div>
             <Link href={`/projetos/${project.id_projeto}`} className="panel-link">
-              Ver analise geoespacial
+              Ver análise geoespacial →
             </Link>
           </article>
         ))}
