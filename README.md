@@ -10,6 +10,23 @@ Base isolada de um portal cliente em Next.js + TypeScript para visualizacao anal
 - ✅ Rotas V1 implementadas
 - ✅ Tipagem completa do banco
 - ✅ Build validado sem erros
+- ✅ Publicado no GitHub (baseline demo)
+- ✅ Deploy inicial no Vercel concluido
+
+## Fonte Oficial do Projeto
+
+### Regra de trabalho (a partir de agora)
+- **Fonte unica da verdade**: repositório GitHub.
+- Evolucao funcional, ajustes e hotfixes devem partir da branch do repositório (nao de copias locais paralelas).
+- Qualquer mudanca feita localmente deve ser commitada e enviada antes de novo deploy.
+
+### Repositorio oficial
+- GitHub: https://github.com/felipetalin/opyta-portal-cliente
+- Tag de referencia para apresentacao: `v0.3-demo-analitico`
+
+### Ambiente local recomendado
+- Pasta de trabalho: `C:\opyta-portal-local`
+- Backups em Google Drive sao historicos e nao devem ser usados como base primária de desenvolvimento.
 
 ## Principios Centrais
 
@@ -151,6 +168,33 @@ npm run build
 npm start
 ```
 
+### Deploy oficial (Vercel)
+
+1. Importar o repositorio `felipetalin/opyta-portal-cliente` no Vercel (preset Next.js).
+2. Definir variáveis de ambiente (Production/Preview/Development):
+
+```env
+NEXT_PUBLIC_APP_NAME=Portal Cliente Opyta
+NEXT_PUBLIC_SUPABASE_URL=https://zmmylgtdorzdkdxpmnvj.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key-supabase>
+AUTH_COOKIE_NAME=opyta_portal_session
+```
+
+3. Executar deploy de produção.
+4. Se o link abrir com redirecionamento para `vercel.com/sso-api`, desativar proteção de autenticação em Production (Deployment Protection) para acesso público.
+
+### Publicacao de versao (recomendado)
+
+```powershell
+git add .
+git commit -m "feat: <resumo-da-entrega>"
+git push origin main
+
+# opcional: marcar marco de demonstracao
+git tag -a vX.Y.Z -m "<descricao-curta>"
+git push origin vX.Y.Z
+```
+
 ## Proximos Passos (Roadmap)
 
 - [ ] **Mapa Interativo**: Integrar Mapbox ou Leaflet para visualizacao geoespacial
@@ -212,7 +256,7 @@ npm start
 - Sintoma observado: imagem satelite "fragmentada" e pontos aparentemente ausentes, mesmo com coordenadas validas no banco.
 - Causa principal: estilos base do Leaflet ausentes/incompletos no bundle global, afetando composicao de tiles e camadas.
 - Correcao aplicada:
-	- carregar `leaflet/dist/leaflet.css` em `src/app/globals.css`
+	- carregar `leaflet/dist/leaflet.css` no componente client `src/components/map/map-with-leaflet.tsx`
 	- manter regras essenciais de posicionamento das camadas `.leaflet-*`
 	- reforcar contraste dos pontos no satelite (halo branco + preenchimento mais forte)
 - Verificacao tecnica:
@@ -220,7 +264,47 @@ npm start
 	- validar log do Next sem erro runtime do Leaflet
 	- testar com `Ctrl+F5` apos restart limpo do dev server
 
+### 8) Build Vercel pode falhar em `/login` com `useSearchParams`
+- Sintoma observado: `useSearchParams() should be wrapped in a suspense boundary at page "/login"`.
+- Causa principal: componente client com `useSearchParams` renderizado sem `Suspense` na pagina App Router.
+- Correcao aplicada:
+	- envolver o formulario de login com `<Suspense fallback=...>` em `src/app/login/page.tsx`.
+- Prevencao:
+	- sempre que usar hooks de navegacao client (`useSearchParams`, `usePathname`) em rota App Router, validar boundary de `Suspense`.
+
+### 9) Dashboard/lista vazios com login ok: mismatch de fonte de dados
+- Sintoma observado: autenticacao funciona, mas dashboard/projetos aparecem vazios.
+- Causa principal: pagina consultando mock (`data/projects.ts`) com IDs `p-1001...`, enquanto autorizacoes reais usam IDs numericos em `usuario_projetos`.
+- Correcao aplicada:
+	- dashboard e lista migrados para queries reais (`getProjetosByIds`) com IDs autorizados da sessao.
+- Prevencao:
+	- para ambiente oficial, nao usar mock como fonte primaria de paginas protegidas.
+
+### 10) URL de deploy vs URL oficial
+- URL de deploy individual (com hash/sufixo) muda a cada publicacao.
+- URL oficial de producao permanece estavel e deve ser a unica compartilhada com clientes/socios.
+- Procedimento:
+	- verificar status `Ready` + `Current` no Vercel antes de validar com usuario final.
+
 ## Troubleshooting
+
+### "Deploy abre pagina SSO da Vercel"
+- Causa: proteção de autenticação ativa no deployment de produção.
+- Ajuste: Vercel Project Settings -> Deployment Protection -> liberar acesso público para Production.
+
+### "Mapa satelite fragmentado ou sem pontos"
+- Confirmar CSS base do Leaflet carregado no client map (`src/components/map/map-with-leaflet.tsx`).
+- Validar coordenadas no banco (`latitude`/`longitude` nao nulas) para o projeto selecionado.
+- Fazer hard refresh (`Ctrl+F5`) após deploy/restart.
+
+### "Build Vercel falha em /login com useSearchParams"
+- Garantir `Suspense` envolvendo o formulario/painel que usa `useSearchParams`.
+- Confirmar build local com `npm run build` antes do push.
+
+### "Login funciona, mas dashboard/projetos vazios"
+- Confirmar que as paginas usam query real no Supabase (nao mock local).
+- Verificar se o usuario possui registros em `usuario_projetos`.
+- Conferir se IDs autorizados da sessao sao convertidos para numero antes da query `.in("id_projeto", ids)`.
 
 ### "npm: command not found"
 ```powershell
@@ -241,8 +325,9 @@ npm -v  # Deve retornar versao
 
 - Projeto: Portal Cliente Opyta V1
 - Data: abril 2026
-- Repositorio: isolado em C:\opyta-portal-local
-- Codigo-fonte backup: g:\Meu Drive\Opyta_Data_Versão_Cliente
+- Repositorio oficial: https://github.com/felipetalin/opyta-portal-cliente
+- Workspace local recomendado: C:\opyta-portal-local
+- Codigo-fonte backup (historico): g:\Meu Drive\Opyta_Data_Versão_Cliente
 
 ## License
 
