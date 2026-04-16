@@ -12,6 +12,11 @@ Base isolada de um portal cliente em Next.js + TypeScript para visualizacao anal
 - ✅ Build validado sem erros
 - ✅ Publicado no GitHub (baseline demo)
 - ✅ Deploy inicial no Vercel concluido
+- ✅ Identidade visual Opyta aplicada (logo, paleta verde/dourado, tipografia, icones)
+- ✅ Login oficial com email/senha real habilitado
+- ✅ Dashboard e lista de projetos com dados reais autorizados
+- ✅ Mapa Leaflet funcional em producao (CSS, altura, satelite, marcadores)
+- ✅ URL de producao estavel identificada e validada com usuario real
 
 ## Fonte Oficial do Projeto
 
@@ -194,6 +199,23 @@ git push origin main
 git tag -a vX.Y.Z -m "<descricao-curta>"
 git push origin vX.Y.Z
 ```
+
+## Proximas Etapas para Continuidade
+
+### Prioritario (proximo ciclo de trabalho)
+
+- [ ] **Lista de projetos aprimorada**: exibir nome do cliente/empresa junto ao nome do projeto para facilitar identificacao
+- [ ] **Detalhe do projeto (`/projetos/[id]`)**: implementar pagina de detalhe com mapa Leaflet + KPI cards + filtro por campanha usando dados analiticos reais (`vw_geo_biota`)
+- [ ] **Filtro de campanha no mapa**: dropdown `nome_campanha` para controlar quais pontos aparecem no mapa do detalhe
+- [ ] **Popup analitico no mapa**: ao clicar num marcador, exibir metricas do ponto (indicador, campanha, data, valor)
+- [ ] **UX do dashboard**: adicionar cards de resumo por projeto (ultima campanha, total de pontos, status) para ampliar valor da pagina inicial
+
+### Medio prazo
+
+- [ ] **Dominio customizado**: configurar dominio `portal.opyta.com.br` no Vercel (requer acesso ao DNS)
+- [ ] **Onboarding de novos usuarios**: fluxo para criar acesso e vincular projetos em `usuario_projetos`
+- [ ] **Graficos de tendencia**: evolucao temporal de indicadores por ponto/campanha
+- [ ] **Download de dados**: exportar filtros ativos como CSV/PDF
 
 ## Proximos Passos (Roadmap)
 
