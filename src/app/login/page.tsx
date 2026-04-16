@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { DemoLoginForm } from "@/components/auth/demo-login-form";
+import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {
   return (
@@ -10,9 +10,9 @@ export default function LoginPage() {
           <p className="brand-tagline">Consultoria em Sustentabilidade Corporativa</p>
         </div>
         <h1>Acesso ao Portal Cliente</h1>
-        <p>Ambiente de visualizacao read-only para analises geoespaciais.</p>
+        <p>Ambiente oficial de visualizacao read-only para analises geoespaciais.</p>
         <Suspense fallback={<p className="hint">Carregando formulario...</p>}>
-          <DemoLoginForm />
+          <LoginForm />
         </Suspense>
       </div>
     </section>
