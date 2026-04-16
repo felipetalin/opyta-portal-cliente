@@ -210,10 +210,63 @@ git push origin vX.Y.Z
 - [ ] **Popup analitico no mapa**: ao clicar num marcador, exibir metricas do ponto (indicador, campanha, data, valor)
 - [ ] **UX do dashboard**: adicionar cards de resumo por projeto (ultima campanha, total de pontos, status) para ampliar valor da pagina inicial
 
+### Liberacao de acesso para clientes reais
+
+Este e o fluxo operacional para ativar um novo cliente no portal sem expor o sistema a cadastros nao autorizados.
+
+**Principio**: nenhum cliente se cadastra sozinho. A Opyta controla 100% dos acessos.
+
+#### Passo a passo para liberar um cliente
+
+```
+1. Criar usuario no Supabase
+   - Supabase Dashboard → Authentication → Users → Invite user
+   - Informar e-mail do cliente; o Supabase envia convite com link de definicao de senha
+   - Alternativa (via SQL):
+     SELECT supabase_admin.create_user('{"email":"cliente@empresa.com","password":"SenhaTemporaria@1","email_confirm":true}');
+
+2. Obter o UUID do usuario criado
+   - Authentication → Users → copiar o `user_id` (UUID)
+
+3. Vincular usuario aos projetos autorizados
+   INSERT INTO usuario_projetos (user_id, projeto_id)
+   VALUES
+     ('<uuid-do-cliente>', <id-projeto-1>),
+     ('<uuid-do-cliente>', <id-projeto-2>);
+
+4. Validar acesso
+   - Logar com as credenciais do cliente em: https://opyta-portal-cliente.vercel.app/login
+   - Confirmar que apenas os projetos corretos aparecem no dashboard
+   - Confirmar que o mapa e os detalhes carregam sem erro
+
+5. Enviar credenciais ao cliente (e-mail seguro)
+   - URL de acesso: https://opyta-portal-cliente.vercel.app
+   - E-mail: <email-cadastrado>
+   - Senha temporaria (orientar a trocar no primeiro acesso)
+```
+
+#### Revogar ou alterar acesso
+
+```sql
+-- Remover todos os projetos de um usuario
+DELETE FROM usuario_projetos WHERE user_id = '<uuid>';
+
+-- Remover acesso a projeto especifico
+DELETE FROM usuario_projetos WHERE user_id = '<uuid>' AND projeto_id = <id>;
+
+-- Desativar usuario (sem excluir)
+-- Supabase Dashboard → Authentication → Users → selecionar → Ban user
+```
+
+#### Meta: painel interno de gerenciamento de acessos (medio prazo)
+
+- [ ] Tela `/admin/usuarios` (acesso restrito a role `admin`) para criar/vincular/revogar usuarios sem usar SQL manual
+- [ ] Envio automatico de e-mail de boas-vindas com credenciais apos vinculacao
+- [ ] Log de ultimo acesso por usuario exibido no painel admin
+
 ### Medio prazo
 
 - [ ] **Dominio customizado**: configurar dominio `portal.opyta.com.br` no Vercel (requer acesso ao DNS)
-- [ ] **Onboarding de novos usuarios**: fluxo para criar acesso e vincular projetos em `usuario_projetos`
 - [ ] **Graficos de tendencia**: evolucao temporal de indicadores por ponto/campanha
 - [ ] **Download de dados**: exportar filtros ativos como CSV/PDF
 
