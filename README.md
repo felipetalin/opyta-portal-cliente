@@ -15,6 +15,8 @@ Base isolada de um portal cliente em Next.js + TypeScript para visualizacao anal
 - ✅ Identidade visual Opyta aplicada (logo, paleta verde/dourado, tipografia, icones)
 - ✅ Login oficial com email/senha real habilitado
 - ✅ Dashboard e lista de projetos com dados reais autorizados
+- ✅ Dashboard com cards por projeto (cliente, status, local e datas)
+- ✅ Lista de projetos com nome da empresa cliente
 - ✅ Mapa Leaflet funcional em producao (CSS, altura, satelite, marcadores)
 - ✅ URL de producao estavel identificada e validada com usuario real
 
@@ -204,11 +206,11 @@ git push origin vX.Y.Z
 
 ### Prioritario (proximo ciclo de trabalho)
 
-- [ ] **Lista de projetos aprimorada**: exibir nome do cliente/empresa junto ao nome do projeto para facilitar identificacao
+- [x] **Lista de projetos aprimorada**: exibir nome do cliente/empresa junto ao nome do projeto para facilitar identificacao
 - [ ] **Detalhe do projeto (`/projetos/[id]`)**: implementar pagina de detalhe com mapa Leaflet + KPI cards + filtro por campanha usando dados analiticos reais (`vw_geo_biota`)
 - [ ] **Filtro de campanha no mapa**: dropdown `nome_campanha` para controlar quais pontos aparecem no mapa do detalhe
 - [ ] **Popup analitico no mapa**: ao clicar num marcador, exibir metricas do ponto (indicador, campanha, data, valor)
-- [ ] **UX do dashboard**: adicionar cards de resumo por projeto (ultima campanha, total de pontos, status) para ampliar valor da pagina inicial
+- [x] **UX do dashboard**: adicionar cards de resumo por projeto (cliente, status, local e datas) para ampliar valor da pagina inicial
 
 ### Liberacao de acesso para clientes reais
 
@@ -360,6 +362,16 @@ DELETE FROM usuario_projetos WHERE user_id = '<uuid>' AND projeto_id = <id>;
 - URL oficial de producao permanece estavel e deve ser a unica compartilhada com clientes/socios.
 - Procedimento:
 	- verificar status `Ready` + `Current` no Vercel antes de validar com usuario final.
+
+### 11) Enriquecimento de contexto no dashboard e lista
+- Sintoma observado: usuario via projeto, mas sem contexto suficiente de cliente e cronograma para decidir rapidamente.
+- Causa principal: cards exibiam dados minimos (nome/ID), sem `nome_empresa` e sem bloco visual de datas no dashboard.
+- Correcao aplicada:
+   - criada query `getProjetosWithCliente` para combinar projetos autorizados com `clientes.nome_empresa`.
+   - dashboard evoluido para cards por projeto com cliente, status, local e datas.
+   - lista de projetos alinhada ao mesmo padrao visual e informacional.
+- Prevencao:
+   - manter telas protegidas com contexto minimo de negocio (cliente + status + tempo) para evitar regressao de usabilidade.
 
 ## Troubleshooting
 
