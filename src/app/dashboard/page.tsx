@@ -1,21 +1,37 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { KpiCard } from "@/components/ui/kpi-card";
-import { listProjectsByIds } from "@/lib/data/projects";
 import { getServerSession } from "@/lib/auth";
+import { getProjetosByIds } from "@/lib/queries";
 
 export default async function DashboardPage() {
   const session = await getServerSession();
-  const projects = listProjectsByIds(session?.allowedProjectIds ?? []);
+  if (!session) {
+    redirect("/login?next=/dashboard");
+  }
+
+  const allowedIds = (session?.allowedProjectIds ?? [])
+    .map((id) => Number.parseInt(id, 10))
+    .filter((id) => Number.isFinite(id));
+
+  const projects = await getProjetosByIds(allowedIds, session?.accessToken);
+  const activeCount = projects.filter((p) =>
+    (p.status_projeto ?? "").toLowerCase().includes("ativo")
+  ).length;
+  const statusFilledCount = projects.filter((p) => Boolean(p.status_projeto)).length;
 
   const kpis = [
-    { titulo: "Projetos ativos", valor: String(projects.filter((p) => p.status === "ativo").length) },
+    { titulo: "Projetos ativos", valor: String(activeCount) },
     { titulo: "Projetos autorizados", valor: String(projects.length) },
     {
-      titulo: "Area total monitorada",
-      valor: `${projects.reduce((sum, project) => sum + project.areaHa, 0)} ha`
+      titulo: "Com status informado",
+      valor: String(statusFilledCount)
     },
-    { titulo: "Integridade dos dados", valor: "99,2%", variacao: "+0,4 p.p." }
+    {
+      titulo: "Usuario autenticado",
+      valor: session?.email ?? "n/d"
+    }
   ];
 
   return (
@@ -28,7 +44,7 @@ export default async function DashboardPage() {
 
       <section className="panel" style={{ marginTop: "16px" }}>
         <h2>Atalhos</h2>
-        <p>Explore detalhes por projeto e acompanhe os indicadores espaciais.</p>
+        <p>Explore os projetos liberados para seu usuario e acompanhe os indicadores espaciais.</p>
         <Link href="/projetos" className="panel-link">
           Abrir lista de projetos
         </Link>
