@@ -332,6 +332,77 @@ select:focus {
   box-shadow: 0 6px 16px rgba(71, 92, 35, 0.1);
 }
 
+.map-container {
+  height: 100%;
+  min-height: 360px;
+  width: 100%;
+  z-index: 1;
+}
+
+.leaflet-container {
+  height: 100%;
+  min-height: 360px;
+  width: 100%;
+  border-radius: 16px;
+  background: #dfe8ca;
+}
+
+.leaflet-control-attribution {
+  font-size: 0.65rem;
+}
+
+.map-loading,
+.map-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 360px;
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.map-legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  z-index: 450;
+}
+
+.map-legend-scale {
+  height: 8px;
+  width: 84px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #dcfce7 0%, #facc15 35%, #f97316 68%, #dc2626 100%);
+}
+
+.popup-content {
+  min-width: 180px;
+}
+
+.popup-content p {
+  margin: 6px 0;
+}
+
+.popup-indicators {
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.popup-indicators li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .map-grid {
   position: absolute;
   inset: 0;

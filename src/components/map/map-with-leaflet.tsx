@@ -1,5 +1,7 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
+
 import {
   MapContainer,
   TileLayer,
@@ -148,7 +150,7 @@ export default function MapWithLeaflet({
       key={`${title}-${indicatorKey}-${pontos.length}`}
       center={initialCenter}
       zoom={initialZoom}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", minHeight: "360px", width: "100%" }}
       className="map-container"
     >
       <RefreshMapSize />
