@@ -204,6 +204,21 @@ git push origin vX.Y.Z
 
 ## Proximas Etapas para Continuidade
 
+### Proxima etapa para retomada (primeira acao ao voltar)
+
+**Etapa foco**: implementar o detalhe do projeto em `/projetos/[id]` com base analitica real (`vw_geo_biota`).
+
+**Escopo minimo desta retomada**:
+- carregar dados do projeto autenticado
+- renderizar mapa Leaflet com pontos geoespacializados
+- habilitar filtro por `nome_campanha`
+- exibir popup do ponto com indicador, campanha, data e valor
+
+**Criterio de pronto**:
+- abrir um projeto em `/projetos/[id]` e visualizar pontos no mapa
+- trocar campanha no filtro e observar atualizacao dos pontos
+- manter acesso restrito por usuario (RLS + projetos autorizados)
+
 ### Prioritario (proximo ciclo de trabalho)
 
 - [x] **Lista de projetos aprimorada**: exibir nome do cliente/empresa junto ao nome do projeto para facilitar identificacao
