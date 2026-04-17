@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {
@@ -10,7 +11,9 @@ export default function LoginPage() {
         </div>
         <h1>Acesso ao Portal Cliente</h1>
         <p>Ambiente oficial de visualizacao read-only para analises geoespaciais.</p>
-        <LoginForm />
+        <Suspense fallback={<p>Carregando formulario de acesso...</p>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </section>
   );
