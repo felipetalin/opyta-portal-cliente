@@ -176,3 +176,7 @@ Criterio de concluido:
 - Hardening do endpoint legado em `src/app/api/auth/demo/route.ts` com bloqueio configuravel via `AUTH_DEMO_ENABLED`.
 - Registro no README do procedimento de corte homolog -> producao para desativar legado com seguranca.
 - Verificacao operacional apos alerta de indisponibilidade: aplicacao respondeu normalmente em web e endpoints de auth no momento da checagem.
+- Inicializacao do repositorio Git local e commit base para versionamento da etapa.
+- Vinculo do projeto local com Vercel via `npx vercel link`.
+- Deploy de producao executado com alias em `https://opyta-portal-cliente.vercel.app`.
+- Correcao de build Next.js 16 na rota de login com `Suspense` em `src/app/login/page.tsx` apos erro de prerender com `useSearchParams`.
